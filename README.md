@@ -43,24 +43,32 @@ Eventually, with an assembly language approach computing in binary, if we go the
 
 Here's a somewhat simplified version of the code, with several parameters:
 ```text
-100 @%=&1414
-110 N=6 : REM number of iterations of X+SIN(X)
-120 P=3 : REM initial estimate for PI
-130 U=9 : REM odd, max term in SIN(X)
-140 PRINT P
-150 FOR I=1 TO N
-160   REM compute SIN of reduced angle with a series
-170   T=P/125:S=T:Q=T*T : REM S, T, Q, P all longs
-180   FOR K=3 TO U STEP 2
-190   D=K*(K-1) : REM can make this an addition
-200   T=-T*Q/D
-210   S=S+T
-220   NEXT K
-230   REM apply the SIN(5X) transformation
-240   FOR J=1 TO 3
-250     S=S*(5-S*S*(4+16*(1-S)*(1+S)))
-260   NEXT J
-270   P=P+S
-280   PRINT P-PI
-290 NEXT I
+  100 @%=&1414
+  110 N=3 : REM number of iterations of X+SIN(X)
+  120 P=3 : REM initial estimate for PI
+  130 U=9 : REM odd, max term in SIN(X)
+  140 PRINT P
+  150 FOR I=1 TO N
+  160   REM compute SIN of reduced angle with a series
+  170   T=P/125:S=T:Q=T*T : REM S, T, Q, P all longs
+  180   FOR K=3 TO U STEP 2
+  190     D=K*(K-1) : REM can make this an addition
+  200     T=-T*Q/D
+  210     S=S+T
+  220   NEXT K
+  230   REM apply the SIN(5X) transformation
+  240   FOR J=1 TO 3
+  250     S=S*(5-S*S*(4+16*(1-S)*(1+S)))
+  260   NEXT J
+  270   P=P+S
+  280   PRINT P
+  290 NEXT I
+```
+with result
+```text
+>RUN
+                   3
+3.1411200080598672224
+3.1415926535721955587
+3.1415926535897932385
 ```
