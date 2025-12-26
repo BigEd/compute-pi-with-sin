@@ -46,7 +46,7 @@ Here's a somewhat simplified version of the code, with several parameters:
   100 @%=&1414
   110 N=3 : REM number of iterations of X+SIN(X)
   120 P=3 : REM initial estimate for PI
-  130 U=5 : REM odd, max term in SIN(X)
+  130 U=9 : REM odd, max term in SIN(X)
   140 PRINT ;P
   150 FOR I=1 TO N
   160   REM compute SIN of reduced angle with a series
@@ -71,7 +71,7 @@ with result
 ```text
 >RUN
 3
-3.1411200080597545773 -0.00047264553003866123515
-3.1415926535720385825 -1.7754656035304239303E-11
-3.1415926535896360966 -1.5714187763526954456E-13
+3.1411200080598672224 -0.00047264552992601609888
+3.1415926535721955587 -1.7597679823760925544E-11
+3.1415926535897932385 0
 ```
