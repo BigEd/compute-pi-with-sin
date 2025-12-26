@@ -77,3 +77,7 @@ with result
 3.1415926535721955587 -1.7597679823760925544E-11
 3.1415926535897932385 0
 ```
+
+Instead of fixing the number of terms to compute the sin() we can keep adding terms until it makes no difference. In fixed point, that's until the term is zero.  That's one more term than we needed but for large computations that's not a huge overhead.
+
+How to tell how many iterations of the x+sin(x) are needed? Each one triples the number of correct digits, which is such big progress that we don't want to do one extra iteration for no gain. Instead, if the number we add has lots of leading zeros then it's the final one. It should have a third as many leading zeros, at least, as the number of pi digits we want to compute.
