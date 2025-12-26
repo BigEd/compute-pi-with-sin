@@ -46,8 +46,8 @@ Here's a somewhat simplified version of the code, with several parameters:
   100 @%=&1414
   110 N=3 : REM number of iterations of X+SIN(X)
   120 P=3 : REM initial estimate for PI
-  130 U=9 : REM odd, max term in SIN(X)
-  140 PRINT P
+  130 U=5 : REM odd, max term in SIN(X)
+  140 PRINT ;P
   150 FOR I=1 TO N
   160   REM compute SIN of reduced angle with a series
   170   T=P/125:S=T:Q=T*T : REM S, T, Q, P all longs
@@ -58,17 +58,20 @@ Here's a somewhat simplified version of the code, with several parameters:
   220   NEXT K
   230   REM apply the SIN(5X) transformation
   240   FOR J=1 TO 3
-  250     S=S*(5-S*S*(4+16*(1-S)*(1+S)))
+  252     Q=S*S
+  254     T=16*Q-20
+  256     T=Q*T+5
+  258     S=S*T
   260   NEXT J
   270   P=P+S
-  280   PRINT P
+  280   PRINT ;P" "P-PI
   290 NEXT I
 ```
 with result
 ```text
 >RUN
-                   3
-3.1411200080598672224
-3.1415926535721955587
-3.1415926535897932385
+3
+3.1411200080597545773 -0.00047264553003866123515
+3.1415926535720385825 -1.7754656035304239303E-11
+3.1415926535896360966 -1.5714187763526954456E-13
 ```
