@@ -51,7 +51,9 @@ Here's a somewhat simplified version of the code, with several parameters:
   150 FOR I=1 TO N
   160   REM compute SIN of reduced angle with a series
   170   T=P/125:S=T:Q=T*T : REM S, T, Q, P all longs
+  175   D=0:E=6
   180   FOR K=3 TO U STEP 2
+  190   D=D+E:E=E+8
   190     D=K*(K-1) : REM can make this an addition
   200     T=-T*Q/D
   210     S=S+T
