@@ -1,0 +1,6 @@
+   1 REM simplest demonstration in Basic using SIN
+   10 P=3
+   20 FOR I=1 TO 2
+   30 P=P+SIN(P)
+   40 PRINT P
+   50 NEXT I
