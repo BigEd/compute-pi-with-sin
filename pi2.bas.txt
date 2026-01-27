@@ -1,24 +1,24 @@
    10 @%=&1414
-   20 P=3 : REM initial estimate for PI
-   30 M=2 : REM number of angle reductions
-   40 A=2^-30  : REM cube root of accuracy
-   50 PRINT ;M" angle reductions"
+   20 P=3   : REM initial estimate for PI
+   30 M%=2  : REM number of angle reductions
+   40 A%=10 : REM bits of accuracy wanted
+   50 PRINT ;M%" angle reductions"
    60 REPEAT
   100   REM compute SIN of reduced angle with a series
-  110   T=P/INT(.5+5^M):S=T:Q=T*T : REM S, T, Q, P all longs
-  120   D=0:E=6
+  110   T=P/INT(.5+5^M%):S=T:Q=T*T : REM S, T, Q, P all longs
+  120   D%=0:E%=6
   130   REPEAT
-  140     D=D+E:E=E+8
-  150     T=-T*Q/D
+  140     D%=D%+E%:E%=E%+8
+  150     T=-T*Q/D%
   160     S=S+T
   170   UNTIL S=S+T
   180   REM apply the SIN(5X) transformation
-  190   FOR J=1 TO M
+  190   FOR J%=1 TO M%
   200     Q=S*S
-  210     T=16*Q-20:REM T about -19
-  220     T=Q*T+5:REM T just under 5
+  210     T=16*Q-20 : REM T about -19
+  220     T=Q*T+5   : REM T just under 5
   230     S=S*T
-  240   NEXT J
+  240   NEXT J%
   250   P=P+S
   260   PRINT;P" "P-PI
-  270 UNTIL S<A
+  270 UNTIL S<2^-(A%/3)
