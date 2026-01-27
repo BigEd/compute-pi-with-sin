@@ -1,0 +1,100 @@
+AUTO
+
+REM  ***  PI BY WALLIS-WASICKI FORMULA  ***
+REM CLS: REM KEYOFF: WIDTH 40
+DIM A%(50), B%(50), C%(100), Q%(50), X%(50), Y%(100), W%(50)
+INPUT "Number of decimal digits: ";N$: ND=VAL(N$): PRINT
+B% = 10000: N%=ND DIV 4 + 2: K%=ND*12 DIV 25 + 1
+M%=10*LOG(ND)/3
+TIME=0
+D%=8*K%+4: E%=D%-8: G%=4*K%*K%-1
+W%(1)=4
+FOR IT=1 TO K%
+FOR I%=0 TO N%
+Q%(I%)=W%(I%)
+NEXT
+PROCDIVIDE
+PROCADD
+B%(1)=B%(1)+D%
+PROCLINV
+PROCMULT
+FOR I%=1 TO N%: B%(I%)=C%(I%): NEXT
+G%=G%-E%
+E%=E%-8
+NEXT
+B%(1)=B%(1)+D%-1
+PROCLINV
+FOR I%=1 TO N%
+A%(I%)=W%(I%): X%(I%)=C%(I%)
+NEXT
+X%(2)=X%(2)+B%/2
+PROCLMULT
+TM = TIME/100
+FOR I%=1 TO N%
+@%=8:PRINT ;" ";INT(.5+C%(I%));
+NEXT
+PRINT: PRINT: PRINT "Time: ";TM;: PRINT "s" : PRINT
+END
+DEFPROCLINV
+T=1/(B%(1)+B%(2)/B%)
+X%(1)=T: X%(2)=(T*B%)MODB%
+FOR L%=1 TO M%
+FOR I%=1 TO N%
+A%(I%)=B%(I%)
+NEXT
+PROCLMULT
+R%=0
+FOR I%=N% TO 2 STEP -1
+T%=(B%-R%-C%(I%))MOD B%
+R%=R% OR SGN(C%(I%))
+Y%(I%)=T%
+NEXT
+Y%(1)=2-R%-C%(1)
+FOR I%=1 TO N%
+A%(I%)=Y%(I%)
+NEXT
+PROCLMULT
+FOR I%=1 TO N%
+X%(I%)=C%(I%)
+NEXT
+NEXT
+ENDPROC
+DEFPROCLMULT
+FOR I%=1 TO N%
+C%(I%)=0
+NEXT
+FOR I%=N% TO 1 STEP -1
+P%=0
+FOR J%=N%-I%+2 TO -1 STEP -1
+T%=(P%+A%(I%)*X%(J%+1))
+C%(I%+J%)=C%(I%+J%)+T%MODB%
+P%=T%DIVB%
+NEXT
+NEXT
+FOR I%=N%+2 TO 2 STEP -1
+T%=C%(I%)
+C%(I%)=T%MODB%
+C%(I%-1)=C%(I%-1)+T% DIV B%
+NEXT
+ENDPROC
+DEFPROCDIVIDE
+Y%=0
+FOR I%= 1 TO N%
+X%=W%(I%)+Y%*B%
+W%(I%)=X%DIVG%: Y%=X% MODG%
+NEXT
+ENDPROC
+DEFPROCADD
+Y%=0
+FOR I%=N% TO 1 STEP -1
+X%=W%(I%)+Q%(I%)+Y%
+W%(I%)=X%MODB%: Y%=X%DIVB%
+NEXT
+ENDPROC
+DEFPROCMULT
+Y%=0
+FOR I%=N% TO 1 STEP -1
+X%=C%(I%)*G%+Y%
+C%(I%)=X%MODB%: Y%=X%DIVB%
+NEXT
+ENDPROC
