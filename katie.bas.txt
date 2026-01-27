@@ -1,0 +1,66 @@
+1 REM Compute PI in integer array P() 4 digits per element
+2 REM up to 100000 digits (or whatever memory allows)
+3 REM
+4 REM Uses the formula:  pi = 20*arctan(1/7) + 8*arctan(3/79)
+5 REM
+6 REM and arctan(x) = (y/x) * (1 + 2/3*y + 2/3*4/5*y*y + 2/3*4/5*6/7*y*y*y + .....)
+7 REM where       y = x*x/(1+ x*x)
+8 REM
+9 REM
+10 REM DESTROY ALL   ! clear all variables
+30 F%=10000  :REM 4 digits per array element
+40 M%=INT((HIMEM-TOP)/4/2)-100  :REM number of 4 byte array elements available
+50 PRINT "MAX DIGITS=";M%*4;  :REM prompt the user for the number of digits
+60 INPUT M1%
+66 T1%=TIME  :REM note the time
+70 N%=M1% DIV 4
+80 DIM P%(N%),S%(N%)  :REM need 2 arrays, P=pi, S=partial sum
+
+90 FOR I%=1 TO N% : S%(I%)=0 : NEXT : S%(1)=2800 :REM first term starting value is .28000.....
+110 T%=0:REPEAT:T%=T%+2 :REM loop until S() is zero
+115 PROCADD  :REM add S() to P()
+120 D%=T% : PROCMULTIPLY  :REM mutiply S() by T
+130 D%=50*(T%+1) : PROCDIVIDE  :REM divide S() by 50*(T+1)
+140 UNTIL Z%=0 :REM Check for end of loop
+
+170 REM'TERM2':   :REM second term starting value is .030336000.....
+180 FOR I%=1 TO N% : S%(I%)=0 : NEXT : S%(1)=303 : S%(2)=3600
+
+200 T%=0:REPEAT:T%=T%+2 :REM loop until S() is zero
+205 PROCADD  :REM add S() to P()
+210 D%=T%*9:PROCMULTIPLY   :REM multiply S() by T*9
+220 D%=T%+1:PROCDIVIDE     :REM divide S() by 6250*(T+1)
+230 D%=6250:PROCDIVIDE     :REM (in 2 steps to avoid overflows)
+240 UNTIL Z%=0 :REM Check for end of loop
+
+270 REM'FINISH':
+280 T2%=TIME-T1%:PRINT T2%/100;" Seconds"
+285 FORI%=1TON%:PRINT;" ";RIGHT$(STR$(F%+P%(I%)),4);:NEXT:PRINT
+290 END
+
+
+300 DEFPROCADD :REM add S() into P()
+310 C%=0   :REM clear carry
+320 FOR I%=N% TO 1 STEP -1
+330 X%=P%(I%)+S%(I%)+C%
+340 P%(I%)=X%MODF%:C%=X%DIVF%
+350 NEXT
+360 ENDPROC
+
+
+370 DEFPROCDIVIDE :REM divide S() by D
+380 C%=0 : Z%=0  :REM clear carry and zero flag
+390 FOR I%=1 TO N%
+400 X%=S%(I%)+F%*C%
+410 S%(I%)=X%DIVD%:C%=X%MODD%
+420 IFS%(I%) Z%=1
+430 NEXT
+440 ENDPROC
+
+450 DEFPROCMULTIPLY :REM multiply S() by D
+460 C%=0  :REM clear carry
+470 FOR I%=N% TO 1 STEP -1
+480 X%=D%*S%(I%)+C%
+490 S%(I%)=X%MODF%:C%=X%DIVF%
+500 NEXT
+510 ENDPROC
