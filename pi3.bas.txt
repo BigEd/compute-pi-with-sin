@@ -1,0 +1,56 @@
+AUTO
+
+REM Compute pi by iterating x=sin(x)
+REM Using ideas from Valentin Albillo and Albert Chan
+
+REM This version uses Basic floats
+REM but has been modified
+REM to ease the move to bignums
+
+@%=&1414
+P=3   : REM initial estimate for PI
+M%=2  : REM number of angle reductions
+A%=33 : REM bits of accuracy wanted
+
+PRINT ;M%" angle reductions"
+IF M%=1 R%=5    : REM reduction of the angle 5^M%
+IF M%=2 R%=25
+IF M%=3 R%=125
+IF M%=4 R%=625
+
+REM we get approx 3x the correct bits each time around
+correct=4
+REPEAT
+  correct=correct*3
+  REM compute SIN of reduced angle with a series
+  REM P, Q, S, T all longs
+  D%=R%  : REM compute T=P/R% with fewer PROCs
+  T=P
+  T=T/D% : REM done
+  S=T
+  Q=S*S
+  D%=0:E%=6:O%=TRUE
+  REPEAT
+    D%=D%+E%:E%=E%+8
+    O%=NOTO%
+    T=T*Q
+    T=T/D%
+    IF O% S=S+T ELSE S=S-T
+  UNTIL T<2^-A% : REM until T is small
+  REM apply the SIN(5X) transformation
+  FOR J%=1 TO M%
+    Q=S*S  : REM Q is rather less than 1
+    T=16
+    T=T*Q  : REM T less than 6
+    T=20-T : REM T less than 20
+    T=T*Q  : REM T under 5
+    T=5-T  : REM T under 5
+    Q=S    : REM compute S=S*T with fewer PROCs
+    T=T*Q
+    S=T    : REM done
+  NEXT J%
+  T=P      : REM compute P=P+S with fewer PROCs
+  S=S+T
+  P=S      : REM done
+  PRINT;P" "P-PI
+UNTIL correct>A% : REM or until sin has lots of leading zeros
