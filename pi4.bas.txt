@@ -1,36 +1,56 @@
-REM Compute pi by iterating x=sin(x)
+PRINT "Compute pi by iterating x=sin(x)"
 REM Using ideas from Valentin Albillo and Albert Chan
 REM and from Katie Wasserman and Gerson W Barbosa
 
-A%=200 : REM bits of accuracy wanted
-M%=2   : REM number of angle reductions
+T=TIME
 
-REM first element of bignums is units, rest is fractional
-N%=16     : REM size of (big-endian) bignums
-B%=10000  : REM base of bignums
+A%=20  : REM number of decimal digits
+PRINT ;"Computing "A%" digits of pi"
+REM convert from decimal digits to bits
+A%=A%*LOG(10)/LOG(2)+1 : REM now A% is bits of accuracy wanted
+PRINT ;"that is "A%" bits of accuracy"
 
+REM convert from bits of accuracy to size of bignums
+B%=10^4   : REM base of bignums
+N%=1+A%/(LOG(B%)/LOG(2))   : REM size of (big-endian) bignum arrays
+PRINT ;"using bignums of "N%" elements in base "B%
+
+REM first element of bignum array is units, rest is fractional
 DIM P%(N%)
 DIM Q%(N%+2) : REM seem to need a little overhead for multiplication
 DIM S%(N%+2)
 DIM T%(N%)
 DIM A%(N%+2)
 
-@%=&1414
 P%(1)=3   : REM initial estimate for PI
 
-PRINT ;M%" angle reductions"
+M%=2   : REM number of angle reductions
+PRINT ;"Using "M%" angle reduction(s)"
 IF M%=1 R%=5    : REM reduction of the angle 5^M%
 IF M%=2 R%=25
 IF M%=3 R%=125
 IF M%=4 R%=625
 
 REM we get approx 3x the correct bits each time around
-correct=4
+correctbits=3
 REPEAT
-  REM PRINT'"head of outer loop"
-  correct=correct*3
+  correctbits=correctbits*3
+  groupsneeded% = 4+correctbits/(LOG(B%)/LOG(2))
+  IF groupsneeded% > N% THEN groupsneeded%=N%
+  PROCnextPi(groupsneeded%)
+  PROCprint("P", groupsneeded%)
+  IF P%(1)>3 STOP
+UNTIL correctbits>A% : REM or until sin has lots of leading zeros
 
+PRINT ;"Done in "(TIME-T)/100" seconds"
+
+END
+
+DEFPROCnextPi(N%)
   REM compute SIN of reduced angle with a series
+  REM to accuracy N% elements of the bignum array
+
+  PRINT';"computing sin() with "N%" bignum elements"
 
   REM P, Q, S, T all longs
   REM P is our pi approximation
@@ -55,28 +75,35 @@ REPEAT
     O%=NOTO%
     PROCmulTQtoA                    :REM  A=T*Q
     PROCdivAbyNgivingT(D%)          :REM  T=A/D%
+    REM PROCprint("T", N%)
     IF O% PROCaddTintoS ELSE PROCtakeTfromS
+    REM PROCprint("S", N%)
   UNTIL zero : REM until T is small - detected during division
 
   REM apply the SIN(5X) transformation
   FOR J%=1 TO M%
     REM PRINT '"head of angle embiggening loop"
     PROCsquareStoQ                     :REM  Q=S*S
+    REM PROCprint("Q", N%)
     PROCtimesQby16intoA                :REM  A=Q*16 : REM A less than 6
     PROCtakeAfromNintoT(20)            :REM  T=20-A : REM T less than 20
+    REM PROCprint("T", N%)
     PROCmulTQtoA                       :REM  A=T*Q  : REM A under 5
+    REM PROCprint("A", N%)
+    IF A%(1)>4 PRINT'"A() too big T will go negative":STOP
     PROCtakeAfromNintoT(5)             :REM  T=5-A  : REM T under 5
+    REM PROCprint("T", N%)
     FOR I%=1TON%: Q%(I%)=S%(I%) :NEXT  :REM  Q=S    : REM compute S=S*T with fewer PROCs
     PROCmulTQtoA                       :REM  A=T*Q
     FOR I%=1TON%: S%(I%)=A%(I%) :NEXT  :REM  S=A    : REM done
+    REM PROCprint("S", N%)
   NEXT J%
   FOR I%=1TON%: T%(I%)=P%(I%) :NEXT  :REM  T=P      : REM compute P=P+S with fewer PROCs
   PROCaddTintoS                      :REM  S=S+T
   FOR I%=1TON%: P%(I%)=S%(I%) :NEXT  :REM  P=S      : REM done
-  PROCprint("P")
-UNTIL correct>A% : REM or until sin has lots of leading zeros
 
-END
+  REM P() now contains the latest approximation to pi
+ENDPROC
 
 REM big-endian bignum routines
 REM derived from work by Katie and Gerson
@@ -175,7 +202,7 @@ NEXT
 T%(1)=(T%(1)+N)MODB%
 ENDPROC
 
-DEFPROCprint(B$)
+DEFPROCprint(B$, N%)
 LOCAL I% : REM loop var
 PRINT B$": ";
 FOR I%=1 TO N%
