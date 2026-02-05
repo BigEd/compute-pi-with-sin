@@ -4,7 +4,7 @@ REM and from Katie Wasserman and Gerson W Barbosa
 
 T=TIME
 
-A%=20  : REM number of decimal digits
+A%=72  : REM number of decimal digits
 PRINT ;"Computing "A%" digits of pi"
 REM convert from decimal digits to bits
 A%=A%*LOG(10)/LOG(2)+1 : REM now A% is bits of accuracy wanted
@@ -204,9 +204,9 @@ ENDPROC
 
 DEFPROCprint(B$, N%)
 LOCAL I% : REM loop var
-PRINT B$": ";
-FOR I%=1 TO N%
-  PRINT ;EVAL(B$+"%(I%)")" ";
+PRINT ;B$": "EVAL(B$+"%(1)")" ";
+FOR I%=2 TO N%
+  PRINT ;RIGHT$(STR$(B%+EVAL(B$+"%(I%)")),LEN(STR$(B%))-1)" ";
 NEXT
 PRINT
 ENDPROC
