@@ -39,6 +39,8 @@
 270 REM'FINISH':
 280 T2%=TIME-T1%:PRINT T2%/100;" Seconds"
 285 PRINT ;"   "P%(1);:FORI%=2TON%:PRINT;" ";RIGHT$(STR$(F%+P%(I%)),4);:NEXT:PRINT
+288 PRINT ;muls" integer multiplications"
+289 PRINT ;nzmuls" non-zero integer multiplications"
 290 END
 
 
@@ -63,7 +65,7 @@
 450 DEFPROCMULTIPLY :REM multiply S() by D
 460 C%=0  :REM clear carry
 470 FOR I%=N% TO 1 STEP -1
-480 X%=D%*S%(I%)+C%
+480 X%=D%*S%(I%)+C%:muls=muls+1:IF D%<>0 IF S%(I%)<>0 nzmuls=nzmuls+1
 490 S%(I%)=X%MODF%:C%=X%DIVF%
 500 NEXT
 510 ENDPROC
